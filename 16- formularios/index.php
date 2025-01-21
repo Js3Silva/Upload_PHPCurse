@@ -9,6 +9,16 @@ FILTER_VALIDATE_FLOAT; // Valida se o valor é um número de ponto flutuante (fl
 FILTER_VALIDATE_IP;    // Valida se o valor é um endereço IP (IPv4 ou IPv6) válido.
 FILTER_VALIDATE_URL;   // Valida se o valor é uma URL válida.
 */
+
+/* Sanitização
+filter_input();    // Filtra/valida diretamente uma entrada de $_GET, $_POST, etc.
+filter_var();      // Filtra/valida diretamente uma variável específica.
+
+FILTER_SANITIZE_SPECIAL_CHARS; // Escapa caracteres especiais para evitar XSS.
+FILTER_SANITIZE_EMAIL;         // Remove caracteres inválidos de um endereço de e-mail.
+FILTER_SANITIZE_INT;           // Remove todos os caracteres, exceto dígitos, sinais de + e -.
+FILTER_SANITIZE_URL;           // Remove caracteres inválidos de uma URL.
+*/
 ?>
 
 <?php
@@ -48,6 +58,41 @@ if(isset($_POST['enviar-formulario'])){
 }
 ?>
 
+<?php
+if(isset($_POST['enviar-formulario2'])){
+    //ARRAY DE ERROS
+    $erros = array();
+    
+    //SANITIZE
+    $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
+
+    $idade = filter_input(INPUT_POST, 'idade', FILTER_SANITIZE_NUMBER_INT);
+    if(filter_var($idade, FILTER_VALIDATE_INT)){
+        $erros[] = "idade precisa ser um inteiro";
+    }
+    
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+        $erros[] = "Email inválido!";
+    }
+
+    $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL);
+    if(!$url = filter_input(INPUT_POST, 'url', FILTER_VALIDATE_URL)){
+        $erros[] = "URL inválido!";
+    }
+
+        //EXIBIR ERROS
+        if(!empty($erros)){
+            foreach($erros as $erro){
+                echo "<li> $erro </li>";
+            }
+        } else {
+            echo "Sucesso ao enviar os dados!";
+        }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,15 +101,23 @@ if(isset($_POST['enviar-formulario'])){
     <title>Teste</title>
 </head>
 <body>
-    
+
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+    Nome: <input type="text" name="nome"><br>
+    Idade: <input type="text" name="idade"><br>
+    Email: <input type="text" name="email"><br>
+    URL: <input type="text" name="url"><br>
+    <button type="submit" name="enviar-formulario2"> ENVIAR </button><br>
+    </form>
+    
+    <!-- <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
     Idade: <input type="text" name="idade"><br>
     Email: <input type="text" name="email"><br>
     Peso: <input type="text" name="peso"><br>
     IP: <input type="text" name="ip"><br>
     URL: <input type="text" name="url"><br>
     <button type="submit" name="enviar-formulario"> ENVIAR </button><br>
-    </form>
+    </form> -->
 
     <!-- <a  href="dados.php?idade=25&sobrenome=Sena"> Enviar dados</a> -->
 </body>
