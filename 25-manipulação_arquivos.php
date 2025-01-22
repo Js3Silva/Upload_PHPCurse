@@ -23,6 +23,7 @@ while (!feof($arquivo)) {
     echo $linha; // Exibe a linha lida
 }
 
+echo "<hr>";
 // filesize() - Retorna o tamanho do arquivo em bytes
 // Útil para determinar o tamanho de leitura ou exibição
 $tamanho = filesize("docs/exemplo.txt");
